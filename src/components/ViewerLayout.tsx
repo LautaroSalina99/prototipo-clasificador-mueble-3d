@@ -11,7 +11,7 @@ export function ViewerLayout({ children }: { children: React.ReactNode }) {
       >
         <ViewerPane />
       </section>
-      <main className="bg-white lg:overflow-y-auto">{children}</main>
+      <main className="relative z-0 bg-white lg:overflow-y-auto">{children}</main>
     </div>
   );
 }

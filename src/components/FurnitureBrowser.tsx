@@ -6,9 +6,11 @@ import type { FurnitureDef } from "@/data/types";
 import { edgeSummary } from "@/lib/edgeText";
 import { listFurniture, qrHref } from "@/lib/lookup";
 import { shortCode } from "@/model/ids";
+import { useViewStore } from "@/store/viewStore";
 
 function FurnitureSection({ def }: { def: FurnitureDef }) {
   const { furniture, modules, pieceTypes } = def;
+  const setSelectedQrId = useViewStore((s) => s.setSelectedQrId);
 
   return (
     <section className="mt-8 first:mt-6">
@@ -21,6 +23,7 @@ function FurnitureSection({ def }: { def: FurnitureDef }) {
       <div className="mt-4 flex flex-wrap gap-2">
         <Link
           href={qrHref(furniture.qrId)}
+          onClick={() => setSelectedQrId(furniture.qrId)}
           className="rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
         >
           Ver mueble completo
@@ -52,6 +55,7 @@ function FurnitureSection({ def }: { def: FurnitureDef }) {
             <div className="px-3 pb-3">
               <Link
                 href={qrHref(mod.qrId)}
+                onClick={() => setSelectedQrId(mod.qrId)}
                 className="inline-block text-sm font-medium text-orange-600 underline underline-offset-2 hover:text-orange-700"
               >
                 Ver módulo
@@ -61,6 +65,7 @@ function FurnitureSection({ def }: { def: FurnitureDef }) {
                   <li key={piece.qrId}>
                     <Link
                       href={qrHref(piece.qrId)}
+                      onClick={() => setSelectedQrId(piece.qrId)}
                       className="flex items-center justify-between gap-3 rounded-xl bg-white p-3 shadow-sm ring-1 ring-slate-200 transition hover:ring-orange-400"
                     >
                       <span>
@@ -90,13 +95,14 @@ function FurnitureSection({ def }: { def: FurnitureDef }) {
   );
 }
 
-/** Selector de mueble: al elegir uno se despliegan sus módulos y piezas. */
+/** Selector de mueble: permite acceder directamente a la ficha/visor 3D y desplegar sus módulos. */
 export function FurnitureBrowser() {
   const furniture = listFurniture();
   const [selectedId, setSelectedId] = useState<string>(
     furniture[0].furniture.id,
   );
   const selected = furniture.find((def) => def.furniture.id === selectedId);
+  const setSelectedQrId = useViewStore((s) => s.setSelectedQrId);
 
   return (
     <>
@@ -108,17 +114,17 @@ export function FurnitureBrowser() {
         {furniture.map((def) => {
           const active = def.furniture.id === selectedId;
           return (
-            <button
+            <Link
               key={def.furniture.id}
-              type="button"
-              role="tab"
+              href={qrHref(def.furniture.qrId)}
               id={`tab-${def.furniture.id}`}
-              aria-selected={active}
-              aria-controls={`panel-${def.furniture.id}`}
-              onClick={() => setSelectedId(def.furniture.id)}
+              onClick={() => {
+                setSelectedId(def.furniture.id);
+                setSelectedQrId(def.furniture.qrId);
+              }}
               className={`rounded-full px-4 py-2 text-sm font-medium shadow-sm ring-1 transition ${
                 active
-                  ? "bg-slate-900 text-white ring-slate-900"
+                  ? "bg-slate-900 text-white ring-slate-900 hover:bg-slate-800"
                   : "bg-white text-slate-800 ring-slate-200 hover:ring-orange-400"
               }`}
             >
@@ -128,7 +134,7 @@ export function FurnitureBrowser() {
               >
                 {def.pieceTypes.length} piezas
               </span>
-            </button>
+            </Link>
           );
         })}
       </div>

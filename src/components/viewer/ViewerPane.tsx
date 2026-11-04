@@ -17,11 +17,11 @@ export function ViewerPane() {
   return (
     <div className="relative h-full w-full bg-[#f4f5f7]">
       <FurnitureCanvas />
-      <div className="pointer-events-none absolute inset-x-0 top-3 flex items-start justify-between gap-2 px-3">
+      <div className="pointer-events-none absolute inset-x-0 top-3 z-20 flex items-start justify-between gap-2 px-3">
         <PieceMenu />
         <LinkedToggle />
       </div>
-      <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center px-3">
+      <div className="pointer-events-none absolute inset-x-0 bottom-3 z-20 flex justify-center px-3">
         <ViewModeControl />
       </div>
     </div>
